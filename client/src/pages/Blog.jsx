@@ -57,7 +57,7 @@ const Blog = () => {
                           `http://localhost:8080/api/v1/blog/delete-blog/${items._id}`
                         );
                         if (data.success) {
-                          alert("blog deleted");
+                          toast.success("Blog deleted");
                           window.location.reload(true);
                         }
                       } catch (error) {
