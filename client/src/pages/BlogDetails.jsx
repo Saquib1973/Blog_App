@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 const BlogDetails = () => {
+  const url = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const id = useParams().id;
   const [blog, setBlog] = useState({
@@ -15,9 +16,7 @@ const BlogDetails = () => {
   //get blog details
   const getBlogDetails = async () => {
     try {
-      const { data } = await axios.get(
-        `http://localhost:8080/api/v1/blog/get-blog/${id}`
-      );
+      const { data } = await axios.get(`${url}blog/get-blog/${id}`);
       if (data.success) {
         setBlog({
           title: data.blog.title,

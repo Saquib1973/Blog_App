@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 const Register = () => {
+  const url = process.env.REACT_APP_API_URL;
   //initializing navigate function to navigate between tabs
   const navigate = useNavigate();
   //variable to store data
@@ -21,14 +22,11 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/v1/user/register",
-        {
-          username: data.name,
-          password: data.password,
-          email: data.email,
-        }
-      );
+      const response = await axios.post(`${url}user/register`, {
+        username: data.name,
+        password: data.password,
+        email: data.email,
+      });
       if (response.data.success) {
         const delayNavigation = () => {
           toast.success(response.data.message);

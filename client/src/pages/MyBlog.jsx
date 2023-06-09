@@ -4,6 +4,7 @@ import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 
 const MyBlog = () => {
+  const url = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   const [userBlog, setUserBlog] = useState([]);
@@ -11,9 +12,7 @@ const MyBlog = () => {
   const getAllBlog = async () => {
     try {
       const id = localStorage.getItem("userId");
-      const { data } = await axios.get(
-        `http://localhost:8080/api/v1/blog/user-blog/${id}`
-      );
+      const { data } = await axios.get(`${url}blog/user-blog/${id}`);
       if (data.success) {
         setUserBlog(data.blog.blogs);
       }
@@ -24,6 +23,7 @@ const MyBlog = () => {
   useEffect(() => {
     getAllBlog();
     document.title = "Blog App | My Blog";
+    // eslint-disable-next-line
   }, []);
 
   return (

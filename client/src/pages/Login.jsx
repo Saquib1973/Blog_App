@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { authActions } from "../Redux/store";
 import { toast } from "react-hot-toast";
 const Login = () => {
+  const url = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   //Global state
   const dispatch = useDispatch();
@@ -20,13 +21,10 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/v1/user/login",
-        {
-          email: data.email,
-          password: data.password,
-        }
-      );
+      const response = await axios.post(`${url}user/login`, {
+        email: data.email,
+        password: data.password,
+      });
       if (response.data.success) {
         dispatch(authActions.login());
         localStorage.setItem("userId", response.data.user._id);

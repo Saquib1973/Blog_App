@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const CreateBlog = () => {
+  const url = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const content = [
     {
@@ -30,15 +31,12 @@ const CreateBlog = () => {
     e.preventDefault();
     try {
       console.log(input);
-      const response = await axios.post(
-        `http://localhost:8080/api/v1/blog/create-blog`,
-        {
-          title: input.title,
-          description: input.description,
-          user: id,
-          image: input.image,
-        }
-      );
+      const response = await axios.post(`${url}blog/create-blog`, {
+        title: input.title,
+        description: input.description,
+        user: id,
+        image: input.image,
+      });
       if (response.data.success) {
         const delayNavigation = () => {
           toast.success(response.data.message);
