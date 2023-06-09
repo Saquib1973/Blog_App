@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  AiFillFacebook,
   AiFillGithub,
   AiFillInstagram,
+  AiFillLinkedin,
   AiFillTwitterCircle,
 } from "react-icons/ai";
 function Footer() {
@@ -17,16 +17,32 @@ function Footer() {
         . All Rights Reserved.
       </span>
       <div className="flex mt-4 space-x-6 sm:justify-center md:mt-0">
-        <Link to="/" className="hover:text-red-400 text-2xl md:text-3xl ">
-          <AiFillFacebook />
+        <Link
+          to="https://www.linkedin.com/in/saquib-ali-4a3235219/"
+          target="_blank"
+          className="hover:text-red-400 text-2xl md:text-3xl "
+        >
+          <AiFillLinkedin />
         </Link>
-        <Link to="/" className="hover:text-red-400 text-2xl md:text-3xl ">
+        <Link
+          to="https://www.instagram.com/kooky._.cookie/"
+          target="_blank"
+          className="hover:text-red-400 text-2xl md:text-3xl "
+        >
           <AiFillInstagram />
         </Link>
-        <Link to="/" className="hover:text-red-400 text-2xl md:text-3xl ">
+        <Link
+          to="https://twitter.com/drake_spirit"
+          target="_blank"
+          className="hover:text-red-400 text-2xl md:text-3xl "
+        >
           <AiFillTwitterCircle />
         </Link>
-        <Link to="/" className="hover:text-red-400 text-2xl md:text-3xl ">
+        <Link
+          to="https://github.com/Saquib1973"
+          target="_blank"
+          className="hover:text-red-400 text-2xl md:text-3xl "
+        >
           <AiFillGithub />
         </Link>
       </div>
