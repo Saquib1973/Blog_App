@@ -21,6 +21,9 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 //routes
+app.use("/", (req, res) => {
+  res.status(200).json("App is Running");
+});
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/blog", blogRoutes);
 
