@@ -111,7 +111,8 @@ const Navbar = () => {
                 setTimeout(() => {}, 1500);
               };
               delayNavigation();
-              navigate("/login");
+              navigate("/");
+              window.location.reload(true);
             }}
           >
             Logout

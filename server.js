@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const connectDb = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const blogRoutes = require("./routes/blogRoutes");
+const path = require("path");
 //env config
 dotenv.config();
 
@@ -19,6 +20,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(static(path.join(__dirname, "./client/build")));
 
 //routes
 app.use("/", (req, res) => {
@@ -26,6 +28,10 @@ app.use("/", (req, res) => {
 });
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/blog", blogRoutes);
+
+app.use("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "./client/build/index.html"));
+});
 
 const PORT = process.env.PORT || 8080;
 //Listen
