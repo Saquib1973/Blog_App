@@ -6,9 +6,17 @@ import { useNavigate } from "react-router-dom";
 import { FadeLoader } from "react-spinners";
 const Blog = () => {
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // Track the current page
+  const blogsPerPage = 5; // Number of blogs per page
+  const indexOfLastBlog = currentPage * blogsPerPage;
+  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
+  const [blog, setBlog] = useState([]);
+  const currentBlogs = blog.slice(indexOfFirstBlog, indexOfLastBlog);
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
   const url = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
-  const [blog, setBlog] = useState([]);
   const userId = localStorage.getItem("userId");
   //get blog
   const getAllBlog = async () => {
@@ -36,10 +44,14 @@ const Blog = () => {
           <FadeLoader />
         </div>
       ) : (
-        <div>
-          {blog.map((items) => (
+        <div className="flex flex-col gap-8">
+          {currentBlogs.map((items, index) => (
             <div
-              className="w-[80vw] sm:w-[30rem] bg-black text-white flex justify-evenly my-2 items-center rounded-md gap-4 flex-col pt-2 pb-4"
+              className={`w-[80vw] sm:w-[30rem] ${
+                index % 2 === 0
+                  ? "bg-gray-800 text-gray-300"
+                  : "text-gray-900 bg-gray-500"
+              } flex justify-evenly my-2 items-center rounded-md gap-4 flex-col px-10 pt-2 pb-4`}
               key={items._id}
             >
               {userId === items.user._id && (
@@ -93,6 +105,25 @@ const Blog = () => {
           ))}
         </div>
       )}
+      <div className="pagination mt-10">
+        <ul className="flex gap-4">
+          {Array(Math.ceil(blog.length / blogsPerPage))
+            .fill()
+            .map((_, i) => (
+              <li
+                key={i}
+                onClick={() => paginate(i + 1)}
+                className={
+                  currentPage === i + 1
+                    ? "active bg-red-400 text-white p-1 px-3 transition-all cursor-pointer rounded-lg"
+                    : "p-1 px-2 rounded-lg cursor-pointer hover:bg-white transition-all text-white hover:text-red-400"
+                }
+              >
+                {i + 1}
+              </li>
+            ))}
+        </ul>
+      </div>
     </div>
   );
 };
