@@ -20,18 +20,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(static(path.join(__dirname, "./client/build")));
 
 //routes
-app.use("/", (req, res) => {
-  res.status(200).json("App is Running");
-});
+// app.use("/", (req, res) => {
+//   res.status(200).json("App is Running");
+// });
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/blog", blogRoutes);
-
-app.use("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "./client/build/index.html"));
-});
 
 const PORT = process.env.PORT || 8080;
 //Listen
