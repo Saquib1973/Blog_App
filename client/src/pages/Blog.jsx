@@ -1,161 +1,100 @@
-//Imports
-const blogModel = require("../models/blogModel");
-const userModel = require("../models/userModel");
-const mongoose = require("mongoose");
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+import { FadeLoader } from "react-spinners";
+const Blog = () => {
+  const [loading, setLoading] = useState(false);
+  const url = process.env.REACT_APP_API_URL;
+  const navigate = useNavigate();
+  const [blog, setBlog] = useState([]);
+  const userId = localStorage.getItem("userId");
+  //get blog
+  const getAllBlog = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${url}blog/all-blog`);
+      if (response.data.success) {
+        setBlog(response.data.blog);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+  useEffect(() => {
+    getAllBlog();
+    document.title = "Blog App | All Blog";
+    //eslint-disable-next-line
+  }, []);
 
-const getAllBlogs = async (req, res) => {
-  try {
-    const blog = await blogModel
-      .find({})
-      .populate("user")
-      .sort({ createdAt: -1 });
-    if (!blog) {
-      return res.status(200).send({
-        success: false,
-        message: "Couldn't find blogs",
-      });
-    }
-    return res.status(200).send({
-      success: true,
-      blogsCount: blog.length,
-      message: "Blogs Found Succesfully",
-      blog,
-    });
-  } catch (error) {
-    console.log(error);
-    response.status(500).send({
-      success: false,
-      message: "Internal Server Error",
-      error: error.message,
-    });
-  }
-};
-const createBlog = async (req, res) => {
-  try {
-    const { title, description, image, user } = req.body;
-    if (!title || !description || !image || !user) {
-      return res.status(400).send({
-        success: false,
-        message: "Please enter all fields",
-      });
-    }
-    console.log("done 1");
-    const existingUser = await userModel.findById(user);
-    console.log(existingUser);
-    if (!existingUser) {
-      return res.status(404).send({
-        success: false,
-        message: "unable to find user",
-      });
-    }
-    const newBlog = new blogModel({ title, description, image, user });
-    const session = await mongoose.startSession();
-    console.log("done");
-    session.startTransaction();
-    await newBlog.save({ session });
-    existingUser.blogs.push(newBlog);
-    await existingUser.save({ session });
-    await session.commitTransaction();
-    return res.status(200).send({
-      success: true,
-      message: "Blog created successfully",
-      newBlog,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).send({
-      success: false,
-      message: `Couldn't create blog error : ${error.message}`,
-    });
-  }
-};
-const updateBlog = async (req, res) => {
-  try {
-    const { title, description, image } = req.body;
-    const { id } = req.params;
-    const blog = await blogModel.findByIdAndUpdate(
-      id,
-      { ...req.body },
-      { new: true }
-    );
-    return res.status(200).send({
-      success: true,
-      message: "Blog updated successfully",
-      blog,
-    });
-  } catch (error) {}
-};
-const getOneBlog = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const blog = await blogModel.findById(id);
-    if (!blog) {
-      return res.status(404).send({
-        success: false,
-        message: "Blog not found",
-      });
-    }
-    return res.status(200).send({
-      success: true,
-      message: "Blog Found successfully",
-      blog,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(404).send({
-      success: false,
-      message: `Following error occured : ${error.message}`,
-    });
-  }
-};
-const deleteBlog = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const blog = await blogModel.findByIdAndDelete(id).populate("user");
-    await blog.user.blogs.pull(blog);
-    await blog.user.save();
-    return res.status(200).send({
-      success: true,
-      message: "Blog deleted successfully",
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(404).send({
-      success: false,
-      message: `Error while deleting blog , Error : ${error.message}`,
-    });
-  }
+  return (
+    <div className="bg-gray-400 min-h-screen mt-16 w-full flex flex-col items-center justify-center gap-4 py-6">
+      {loading ? (
+        <div className="h-screen flex items-center justify-center">
+          <FadeLoader />
+        </div>
+      ) : (
+        <div>
+          {blog.map((items) => (
+            <div
+              className="w-[80vw] sm:w-[30rem] bg-black text-white flex justify-evenly my-2 items-center rounded-md gap-4 flex-col pt-2 pb-4"
+              key={items._id}
+            >
+              {userId === items.user._id && (
+                <div className="flex justify-end items-center w-full gap-2 pr-2">
+                  <AiOutlineEdit
+                    className="text-2xl cursor-pointer"
+                    onClick={() => {
+                      navigate(`/blog-details/${items._id}`);
+                    }}
+                  />
+                  <AiOutlineDelete
+                    className="text-2xl cursor-pointer"
+                    onClick={async () => {
+                      try {
+                        const { data } = await axios.delete(
+                          `http://localhost:8080/api/v1/blog/delete-blog/${items._id}`
+                        );
+                        if (data.success) {
+                          toast.success("Blog deleted");
+                          window.location.reload(true);
+                        }
+                      } catch (error) {
+                        console.log(error);
+                      }
+                    }}
+                  />
+                </div>
+              )}
+              <div className="flex items-center justify-between px-4 w-full pt-1">
+                <div className="">
+                  <div className="capitalize text-center py-2 bg-white text-black rounded-3xl">
+                    {items.user.username[0]}
+                  </div>
+                  <div className="text-[0.7rem] mt-1">
+                    {items.createdAt
+                      .split("T")[0]
+                      .split("-")
+                      .reverse()
+                      .join("-")}
+                  </div>
+                </div>
+                <div className="capitalize">{items.user.username}</div>
+              </div>
+              <img src={items.image} alt="" className="h-48 px-2" />
+              <div className="underline underline-offset-4">
+                <span>Title : </span>
+                {items.title}
+              </div>
+              <div className="w-full px-4 text-center">{items.description}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
 
-//user blogs || GET
-const userBlog = async (req, res) => {
-  try {
-    const blog = await userModel.findById(req.params.id).populate("blogs");
-    if (!blog) {
-      return res.status(404).send({
-        success: false,
-        message: "Blog not found",
-      });
-    }
-    return res.status(200).send({
-      blogsCount: blog.length,
-      success: true,
-      message: "Blog successfully found",
-      blog,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(404).send({
-      success: false,
-      message: `Error while getting user blog, Error : ${error.message}`,
-    });
-  }
-};
-module.exports = {
-  getAllBlogs,
-  createBlog,
-  updateBlog,
-  deleteBlog,
-  getOneBlog,
-  userBlog,
-};
+export default Blog;

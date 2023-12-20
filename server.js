@@ -25,6 +25,11 @@ app.use(morgan("dev"));
 // app.use("/", (req, res) => {
 //   res.status(200).json("App is Running");
 // });
+app.use("/api/v1/", (req, res) => {
+  res.json({
+    message: "working properly",
+  });
+});
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/blog", blogRoutes);
 

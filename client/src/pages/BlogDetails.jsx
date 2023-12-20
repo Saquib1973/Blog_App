@@ -32,15 +32,12 @@ const BlogDetails = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(
-        `http://localhost:8080/api/v1/blog/update-blog/${id}`,
-        {
-          title: blog.title,
-          description: blog.description,
-          user: localStorage.getItem("userId"),
-          image: blog.image,
-        }
-      );
+      const response = await axios.put(`${url}blog/update-blog/${id}`, {
+        title: blog.title,
+        description: blog.description,
+        user: localStorage.getItem("userId"),
+        image: blog.image,
+      });
       if (response.data.success) {
         const delayNavigation = () => {
           toast.success(response.data.message);
